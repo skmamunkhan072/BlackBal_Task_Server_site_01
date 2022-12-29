@@ -1,5 +1,5 @@
 {
-  "name": "my-task-server-project",
+  "name": "my-task-add-server",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -15,7 +15,6 @@
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
-    "install": "^0.13.0",
     "mongodb": "^4.13.0",
     "nodemon": "^2.0.20"
   }

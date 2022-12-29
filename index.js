@@ -1,16 +1,17 @@
 const express = require("express");
 const cors = require("cors");
-const port = process.env.PORT || 5000;
 const { MongoClient, ServerApiVersion } = require("mongodb");
-const app = express();
 require("dotenv").config();
+
+const port = process.env.PORT || 5000;
+const app = express();
 
 app.use(cors());
 app.use(express.json());
 
-const uri = process.env.DATABASE_URL;
-console.log(uri);
+// // mongodb url
 
+const uri = process.env.MONGODB_URL;
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -19,19 +20,26 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    // all collection
-    const userAddTaskDatabase = client
+    //Collection create
+    const AllTaskCollection = client
       .db("BlackBal_Task_Database")
-      .collection("All_User_Task");
+      .collection("All_Task");
 
-    app.get("/", (req, res) => {
-      res.send("BlackBale task server is running");
+    app.post("/add-task", async (req, res) => {
+      const query = req.body;
+      const result = await AllTaskCollection.insertOne(query);
+      res.send(result);
     });
   } finally {
   }
 }
+
 run().catch(console.log);
 
-app.listen(port, () => {
-  console.log(`BlackBale Task server is running ${port}`);
+app.get("/", async (req, res) => {
+  res.send("BlackBal Task  server  is running");
 });
+
+app.listen(port, () =>
+  console.log(`BlackBal Task  server  is running on ${port}`)
+);
