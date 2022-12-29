@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 require("dotenv").config();
 
 const port = process.env.PORT || 5000;
@@ -54,15 +54,47 @@ async function run() {
 
     // Task add database function
     app.post("/add-task", async (req, res) => {
-      const email = req.body;
-      const query = { email };
-      const result = await AllTaskCollection.insertOne(query);
+      const data = req.body;
+      const result = await AllTaskCollection.insertOne(data);
       res.send(result);
     });
 
-    app.get("/my-task", async (req, res) => {
-      const query = req.decoded.email;
-      const result = await AllTaskCollection.find();
+    // user all task find
+    app.get("/my-task", verifyJWT, async (req, res) => {
+      const email = req.decoded.email;
+      const query = { userEmail: email, complete: false };
+      const result = await AllTaskCollection.find(query).toArray();
+      res.send(result);
+    });
+
+    // complete Task add
+    app.put("/complete-task", async (req, res) => {
+      const query = req.body;
+      const { id, complete } = query;
+      const filter = { _id: ObjectId(id) };
+      const options = { upsert: true };
+      const updateDoc = {
+        $set: {
+          complete,
+        },
+      };
+
+      const result = await AllTaskCollection.updateOne(
+        filter,
+        updateDoc,
+        options
+      );
+      console.log(result, id);
+      res.send(result);
+    });
+
+    // complete task
+    app.get("/complete-task", verifyJWT, async (req, res) => {
+      const email = req.decoded.email;
+      const query = { userEmail: email, complete: true };
+      const result = await AllTaskCollection.find(query).toArray();
+      console.log(result, email);
+      res.send(result);
     });
   } finally {
   }
