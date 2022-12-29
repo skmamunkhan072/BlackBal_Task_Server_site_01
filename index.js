@@ -17,9 +17,21 @@ const client = new MongoClient(uri, {
   serverApi: ServerApiVersion.v1,
 });
 
-app.get("/", (req, res) => {
-  res.send("my task server is running");
-});
+async function run() {
+  try {
+    // all collection
+    const userAddTaskDatabase = client
+      .db("BlackBal_Task_Database")
+      .collection("All_User_Task");
+
+    app.get("/", (req, res) => {
+      res.send("BlackBale task server is running");
+    });
+  } finally {
+  }
+}
+run().catch(console.log);
+
 app.listen(port, () => {
-  console.log("My Task server is running");
+  console.log(`BlackBale Task server is running ${port}`);
 });
