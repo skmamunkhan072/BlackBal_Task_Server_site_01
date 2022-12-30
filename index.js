@@ -84,7 +84,6 @@ async function run() {
         updateDoc,
         options
       );
-      console.log(result, id);
       res.send(result);
     });
 
@@ -93,7 +92,34 @@ async function run() {
       const email = req.decoded.email;
       const query = { userEmail: email, complete: true };
       const result = await AllTaskCollection.find(query).toArray();
-      console.log(result, email);
+      res.send(result);
+    });
+
+    app.get("/task-edit/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await AllTaskCollection.findOne(query);
+      console.log(result);
+      res.send(result);
+    });
+    app.put("/task-edit", async (req, res) => {
+      const data = req.body;
+      const { id, taskMessage, taskTitle, uploadImgLink } = data;
+      const filter = { _id: ObjectId(id) };
+      const options = { upsert: true };
+      const updateDoc = {
+        $set: {
+          taskMessage,
+          taskTitle,
+          uploadImgLink,
+        },
+      };
+
+      const result = await AllTaskCollection.updateOne(
+        filter,
+        updateDoc,
+        options
+      );
       res.send(result);
     });
   } finally {
