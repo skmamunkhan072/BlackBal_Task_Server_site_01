@@ -53,7 +53,7 @@ async function run() {
     });
 
     // Task add database function
-    app.post("/add-task", async (req, res) => {
+    app.post("/add-task", verifyJWT, async (req, res) => {
       const data = req.body;
       const result = await AllTaskCollection.insertOne(data);
       res.send(result);
@@ -68,7 +68,7 @@ async function run() {
     });
 
     // complete Task add
-    app.put("/task-complete-no-complete", async (req, res) => {
+    app.put("/task-complete-no-complete", verifyJWT, async (req, res) => {
       const query = req.body;
       const { id, complete } = query;
       const filter = { _id: ObjectId(id) };
@@ -95,13 +95,13 @@ async function run() {
       res.send(result);
     });
 
-    app.get("/task-edit/:id", async (req, res) => {
+    app.get("/task-edit/:id", verifyJWT, async (req, res) => {
       const id = req.params.id;
       const query = { _id: ObjectId(id) };
       const result = await AllTaskCollection.findOne(query);
       res.send(result);
     });
-    app.put("/task-edit", async (req, res) => {
+    app.put("/task-edit", verifyJWT, async (req, res) => {
       const data = req.body;
       const { id, taskMessage, taskTitle, uploadImgLink } = data;
       const filter = { _id: ObjectId(id) };
@@ -122,7 +122,7 @@ async function run() {
       res.send(result);
     });
 
-    app.delete("/task-delete/:id", async (req, res) => {
+    app.delete("/task-delete/:id", verifyJWT, async (req, res) => {
       const id = req.params.id;
       const filter = { _id: ObjectId(id) };
       const result = await AllTaskCollection.deleteOne(filter);
